@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>Clash of Sleep</title>
+<link href="https://fonts.googleapis.com/css2?family=Anybody:wght@100..900&family=JetBrains+Mono:wght@100..900&family=Plus+Jakarta+Sans:wght@100..900&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+tailwind.config = {darkMode: "class", theme: {extend: {colors: {"surface-container-lowest": "#000f21", "primary-container": "#6d28d9", "on-primary-fixed": "#250059", "surface-dim": "#031427", "error-container": "#93000a", "on-secondary-fixed-variant": "#5c4300", "on-surface": "#d3e4fe", "on-tertiary": "#00354a", error: "#ffb4ab", "on-secondary-fixed": "#261a00", "on-error-container": "#ffdad6", "inverse-surface": "#d3e4fe", outline: "#958da1", "on-surface-variant": "#ccc3d7", "on-secondary": "#402d00", "surface-variant": "#26364a", "secondary-container": "#e3aa00", "surface-tint": "#d3bbff", tertiary: "#7bd0ff", "on-tertiary-fixed": "#001e2c", "tertiary-container": "#005f81", primary: "#d3bbff", "on-primary-fixed-variant": "#5b00c5", "on-tertiary-container": "#94d7ff", "surface-container-low": "#0b1c30", "surface-container-highest": "#26364a", "surface-bright": "#2a3a4f", "on-primary-container": "#dac5ff", "surface-container-high": "#1b2b3f", "surface-container": "#102034", "inverse-on-surface": "#213145", "on-tertiary-fixed-variant": "#004c69", "secondary-fixed": "#ffdf9f", "secondary-fixed-dim": "#f9bd22", background: "#031427", "inverse-primary": "#7331df", secondary: "#ffc640", surface: "#031427", "on-secondary-container": "#5a4100", "on-primary": "#3f008d", "tertiary-fixed-dim": "#7bd0ff", "primary-fixed": "#ebddff", "tertiary-fixed": "#c4e7ff", "on-background": "#d3e4fe", "outline-variant": "#4a4455", "on-error": "#690005", "primary-fixed-dim": "#d3bbff"}, borderRadius: {DEFAULT: "0.25rem", lg: "0.5rem", xl: "0.75rem", full: "9999px"}, spacing: {"container-padding": "20px", "xp-bar-height": "12px", "element-gap": "12px", "section-margin": "32px", unit: "4px"}, fontFamily: {"display-hero": ["Anybody"], "stat-number": ["Anybody"], "label-caps": ["JetBrains Mono"], "headline-lg-mobile": ["Anybody"], "body-md": ["Plus Jakarta Sans"], "headline-lg": ["Anybody"]}, fontSize: {"display-hero": ["48px", {lineHeight: "52px", letterSpacing: "-0.02em", fontWeight: "800"}], "stat-number": ["24px", {lineHeight: "24px", fontWeight: "800"}], "label-caps": ["12px", {lineHeight: "16px", letterSpacing: "0.1em", fontWeight: "700"}], "headline-lg-mobile": ["28px", {lineHeight: "34px", fontWeight: "700"}], "body-md": ["16px", {lineHeight: "24px", fontWeight: "500"}], "headline-lg": ["32px", {lineHeight: "40px", fontWeight: "700"}]}}}};
+</script>
+<style>
+  .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  .fill-icon { font-variation-settings: 'FILL' 1 !important; }
+  body { background:#031427; min-height:100dvh; -webkit-font-smoothing:antialiased; }
+  .glass-card { background: rgba(30, 41, 59, 0.72); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); }
+  .ambient-glow-gold { box-shadow: 0 0 20px rgba(251,191,36,0.18); }
+  .ambient-glow-purple { box-shadow: 0 0 24px rgba(124,58,237,0.35); }
+  .active-press:active { transform: translateY(2px); }
+  .xp-shimmer { position:relative; overflow:hidden; }
+  .xp-shimmer::after {
+    content:''; position:absolute; inset:0; left:-100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+    animation: shimmer 2.2s infinite;
+  }
+  @keyframes shimmer { 100% { left:100%; } }
+  @keyframes pulse-glow { 0%,100% { box-shadow: 0 0 0px rgba(251,191,36,0);} 50% { box-shadow: 0 0 20px rgba(251,191,36,0.6);} }
+  .active-glow { animation: pulse-glow 2s infinite ease-in-out; }
+  @keyframes scan { 0% { top:0; } 100% { top:100%; } }
+  .scanning-line { height:2px; background:#4edea3; box-shadow:0 0 15px #4edea3; width:100%; position:absolute; animation: scan 3s linear infinite; }
+  .battle-button { transition: all .1s ease; box-shadow: 0 4px 0 0 rgba(0,0,0,.35); }
+  .battle-button:active { transform: translateY(3px); box-shadow: 0 1px 0 0 rgba(0,0,0,.35); }
+  .toggle-core { transition: all .18s ease; }
+  .view { display:none; }
+  .view.active { display:block; animation: fadein .25s ease; }
+  @keyframes fadein { from { opacity:0; transform: translateY(6px);} to { opacity:1; transform:translateY(0);} }
+  .navbtn.active { background: #6d28d9; color: #dac5ff; box-shadow: 0 0 12px rgba(124,58,237,.45); }
+  ::-webkit-scrollbar { width:0px; height:0px; }
+  #toast-wrap { position: fixed; top: 72px; left: 50%; transform: translateX(-50%); z-index: 100; display:flex; flex-direction:column; gap:8px; align-items:center; pointer-events:none; }
+  .toast { background: rgba(16,32,52,0.95); border:1px solid rgba(210,187,255,0.35); color:#d3e4fe; padding:10px 18px; border-radius:9999px; font-family:'JetBrains Mono',monospace; font-size:12px; letter-spacing:0.05em; box-shadow: 0 4px 20px rgba(0,0,0,0.5), 0 0 16px rgba(124,58,237,0.35); animation: toastin .25s ease, toastout .3s ease 2.2s forwards; white-space:nowrap; }
+  @keyframes toastin { from { opacity:0; transform: translateY(-10px);} to { opacity:1; transform:translateY(0);} }
+  @keyframes toastout { to { opacity:0; transform: translateY(-10px); } }
+  .stasis-overlay { position:fixed; inset:0; z-index:200; background: radial-gradient(ellipse at 50% 20%, rgba(109,40,217,0.25), #000f21 70%); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; }
+</style>
+</head>
+<body class="text-on-surface font-body-md text-body-md selection:bg-primary/30 min-h-screen pb-32">
+
+<div id="toast-wrap"></div>
+
+<!-- ============ APP SHELL ============ -->
+<div id="app-shell">
+
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface-dim/85 backdrop-blur-md border-b border-outline-variant/20 shadow-[0_4px_20px_rgba(0,0,0,0.4)] flex justify-between items-center px-container-padding h-16">
+  <div class="flex items-center gap-3">
+    <div class="w-10 h-10 rounded-full border-2 border-primary-container overflow-hidden flex items-center justify-center bg-surface-container-high shadow-[0_0_8px_rgba(124,58,237,0.5)]">
+      <span class="material-symbols-outlined fill-icon text-primary">shield_person</span>
+    </div>
+    <h1 id="hdr-title" class="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tight leading-none">Lvl 18<br/>Nightstalker</h1>
+  </div>
+  <button id="coin-btn" class="active:translate-y-[2px] transition-all hover:opacity-80 flex items-center gap-1.5 bg-surface-container-high px-3 py-1.5 rounded-full border border-outline-variant/30">
+    <span class="material-symbols-outlined fill-icon text-secondary">monetization_on</span>
+    <span id="hdr-coins" class="font-label-caps text-label-caps text-secondary">12,450</span>
+  </button>
+</header>
+
+<main class="pt-24 px-container-padding max-w-lg mx-auto">
+
+  <!-- ============ HOME ============ -->
+  <section class="view active" id="view-home">
+    <div class="space-y-3 mb-section-margin">
+      <div class="flex justify-between items-end">
+        <span class="font-label-caps text-label-caps text-primary uppercase">Exp Progress</span>
+        <span class="font-stat-number text-stat-number text-primary" id="home-xp-label">14,250 <span class="text-on-surface-variant text-sm font-normal">/ 15,000</span></span>
+      </div>
+      <div class="w-full h-xp-bar-height bg-surface-variant rounded-full overflow-hidden relative">
+        <div id="home-xp-bar" class="h-full bg-gradient-to-r from-tertiary-container to-primary-container xp-shimmer" style="width:95%"></div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-element-gap mb-section-margin">
+      <div class="glass-card rounded-xl p-4 flex flex-col justify-between aspect-square ambient-glow-gold border-secondary-container/20">
+        <div class="flex justify-between items-start">
+          <span class="material-symbols-outlined fill-icon text-secondary text-4xl">local_fire_department</span>
+          <span class="bg-secondary/10 text-secondary px-2 py-0.5 rounded-full font-label-caps text-[10px]">ULTRA</span>
+        </div>
+        <div>
+          <p class="font-label-caps text-label-caps text-on-surface-variant mb-1">STREAK</p>
+          <p class="font-display-hero text-display-hero leading-none" id="home-streak">14</p>
+          <p class="text-xs text-secondary mt-1 font-semibold">Days Active</p>
+        </div>
+      </div>
+      <div class="glass-card rounded-xl p-4 flex flex-col justify-between aspect-square border-error/20" id="home-score-card">
+        <div class="flex justify-between items-start">
+          <span class="material-symbols-outlined text-error text-4xl" id="home-score-icon">trending_down</span>
+        </div>
+        <div>
+          <p class="font-label-caps text-label-caps text-on-surface-variant mb-1">TODAY'S SCORE</p>
+          <p class="font-display-hero text-display-hero leading-none text-error" id="home-score">-45</p>
+          <p class="text-xs text-error/80 mt-1 font-medium" id="home-score-label">Inconsistency Penalty</p>
+        </div>
+      </div>
+    </div>
+
+    <section class="mb-section-margin">
+      <div class="glass-card rounded-xl overflow-hidden shadow-2xl">
+        <div class="bg-surface-variant/30 px-4 py-2 border-b border-white/5 flex justify-between items-center">
+          <span class="font-label-caps text-label-caps text-tertiary">NEURAL AWAKENING</span>
+          <span class="material-symbols-outlined text-tertiary text-sm">settings</span>
+        </div>
+        <div class="p-5 flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-xl bg-tertiary/10 flex items-center justify-center">
+              <span class="material-symbols-outlined text-tertiary text-3xl">alarm</span>
+            </div>
+            <div>
+              <p class="font-display-hero text-[32px] leading-tight" id="home-alarm-time">06:30</p>
+              <p class="text-sm text-on-surface-variant">Scheduled for Tomorrow</p>
+            </div>
+          </div>
+          <div class="flex flex-col items-end gap-1">
+            <span class="text-xs font-label-caps" id="home-alarm-status-label">ACTIVE</span>
+            <div id="home-alarm-toggle" class="w-10 h-5 rounded-full relative flex items-center px-1 cursor-pointer toggle-core">
+              <div class="w-3 h-3 bg-white rounded-full shadow-sm toggle-core"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="space-y-3 mb-section-margin">
+      <h2 class="font-label-caps text-label-caps text-on-surface-variant flex items-center gap-2">
+        <span class="material-symbols-outlined text-sm">groups</span> CLAN DOMINANCE
+      </h2>
+      <div class="glass-card rounded-xl p-5 relative overflow-hidden group hover:bg-surface-container transition-colors cursor-pointer" onclick="goTo('clans')">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16 blur-3xl"></div>
+        <div class="flex items-center gap-4 relative z-10">
+          <div class="w-14 h-14 rounded-lg bg-surface-container-highest flex items-center justify-center border-2 border-outline-variant">
+            <span class="material-symbols-outlined fill-icon text-primary text-4xl">military_tech</span>
+          </div>
+          <div class="flex-1">
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="font-headline-lg-mobile text-xl text-on-surface">Dream Walkers</p>
+                <p class="text-sm text-primary">Global Rank #42</p>
+              </div>
+              <div class="text-right">
+                <p class="font-stat-number text-lg">Tier II</p>
+                <p class="text-[10px] font-label-caps text-on-surface-variant">DIVISION</p>
+              </div>
+            </div>
+            <div class="mt-3 w-full h-1 bg-white/5 rounded-full overflow-hidden">
+              <div class="h-full w-[68%] bg-primary shadow-[0_0_8px_rgba(210,187,255,0.6)]"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <button id="stasis-btn" onclick="enterStasis()" class="w-full py-4 bg-primary-container text-on-primary-container rounded-xl font-headline-lg-mobile text-lg shadow-[0_4px_0_0_#5b21b6] active-press active:shadow-none transition-all flex items-center justify-center gap-2 ambient-glow-purple">
+      <span class="material-symbols-outlined">bedtime</span> ENTER STASIS
+    </button>
+  </section>
+
+  <!-- ============ ALARMS ============ -->
+  <section class="view" id="view-alarms">
+    <section class="flex flex-col gap-4 mb-6">
+      <div class="flex justify-between items-end">
+        <h2 class="font-label-caps text-label-caps text-outline uppercase tracking-widest">Active Engagement</h2>
+        <span class="font-label-caps text-label-caps text-secondary">06:30 AM <span class="ml-1">STRIKE TIME</span></span>
+      </div>
+      <div class="glass-card rounded-xl overflow-hidden shadow-2xl">
+        <div class="p-4 border-b border-outline-variant/20 bg-white/5 flex justify-between items-center">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined fill-icon text-secondary">security</span>
+            <span class="font-label-caps text-label-caps">AI VERIFICATION ACTIVE</span>
+          </div>
+          <div class="px-2 py-1 bg-secondary-container/20 rounded-lg border border-secondary/30">
+            <span class="font-label-caps text-label-caps text-secondary text-[10px]">NO DISMISS OPTION</span>
+          </div>
+        </div>
+        <div class="p-4 space-y-4">
+          <div class="relative aspect-video rounded-lg overflow-hidden bg-black/60 flex items-center justify-center border border-white/5">
+            <span class="material-symbols-outlined text-tertiary/40 text-6xl">fitness_center</span>
+            <div class="absolute inset-0 flex flex-col justify-between p-4">
+              <div class="flex justify-between">
+                <div class="flex items-center gap-1 bg-black/60 px-2 py-1 rounded text-[10px] font-label-caps text-secondary border border-secondary/40">
+                  <div class="w-2 h-2 rounded-full bg-secondary animate-pulse"></div> TRACKING...
+                </div>
+                <div class="text-white/80 font-label-caps text-[10px]">CAM_01_FEED</div>
+              </div>
+              <div class="scanning-line"></div>
+              <div class="flex justify-center">
+                <div class="bg-primary-container/90 text-white px-6 py-2 rounded-xl font-display-hero text-[32px] shadow-[0_0_20px_rgba(124,58,237,0.6)]" id="pushup-counter">0/15</div>
+              </div>
+            </div>
+          </div>
+          <button id="pushup-btn" onclick="doPushup()" class="battle-button w-full bg-primary text-on-primary py-2.5 rounded-lg font-label-caps text-xs">LOG REP (AI VERIFIES FORM)</button>
+
+          <div class="glass-card p-3 rounded-lg">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 flex items-center justify-center bg-primary/10 rounded-lg text-primary border border-primary/20">
+                  <span class="material-symbols-outlined">calculate</span>
+                </div>
+                <div>
+                  <p class="font-body-md text-body-md font-bold">Year 11 Math Quiz</p>
+                  <p class="font-label-caps text-[10px] text-outline" id="quiz-status">LOCKED &bull; FINISH PUSHUPS FIRST</p>
+                </div>
+              </div>
+              <button id="quiz-btn" onclick="openQuiz()" disabled class="battle-button bg-surface-container-highest text-outline px-4 py-1 rounded font-label-caps text-[11px] cursor-not-allowed">
+                <span class="material-symbols-outlined text-sm align-middle" id="quiz-icon">lock</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="glass-card p-3 rounded-lg flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 flex items-center justify-center bg-primary/10 rounded-lg text-primary border border-primary/20" id="photo-icon-wrap">
+                <span class="material-symbols-outlined" id="photo-icon">photo_camera</span>
+              </div>
+              <div>
+                <p class="font-body-md text-body-md font-bold">Photo Task: Kitchen</p>
+                <p class="font-label-caps text-[10px] text-outline" id="photo-status">LOCATE &amp; SCAN QR CODE</p>
+              </div>
+            </div>
+            <button id="capture-btn" onclick="captureTask()" class="battle-button bg-primary px-4 py-1 rounded text-on-primary font-label-caps text-[11px]">CAPTURE</button>
+          </div>
+
+          <div class="glass-card rounded-xl p-3 flex items-center justify-between border border-outline-variant/20">
+            <span class="font-label-caps text-[10px] text-outline uppercase" id="challenge-progress-label">0 / 3 challenges complete</span>
+            <span class="font-label-caps text-[10px] text-secondary" id="challenge-progress-note"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="flex flex-col gap-4 mb-6">
+      <h2 class="font-label-caps text-label-caps text-outline uppercase tracking-widest">Upcoming Raids</h2>
+      <div class="space-y-3" id="alarms-list"></div>
+    </section>
+
+    <div class="glass-card p-4 rounded-xl bg-gradient-to-br from-primary-container/20 to-transparent border-primary/20">
+      <div class="flex items-center justify-between mb-3">
+        <span class="font-label-caps text-label-caps text-primary">PROJECTED LOOT</span>
+        <span class="text-primary font-bold">+150 XP</span>
+      </div>
+      <div class="h-xp-bar-height w-full bg-surface-container-highest rounded-full overflow-hidden border border-white/5">
+        <div class="h-full xp-shimmer w-[65%] bg-gradient-to-r from-tertiary to-primary-container"></div>
+      </div>
+      <p class="mt-2 text-[10px] font-label-caps text-outline text-center">340 XP TO LEVEL 19</p>
+    </div>
+  </section>
+
+  <!-- ============ REWARDS ============ -->
+  <section class="view" id="view-rewards">
+    <div class="glass-card rounded-xl p-5 relative overflow-hidden mb-6">
+      <div class="absolute top-0 right-0 p-2 opacity-10"><span class="material-symbols-outlined text-6xl">military_tech</span></div>
+      <div class="flex justify-between items-end mb-4">
+        <div>
+          <h2 class="font-label-caps text-label-caps text-outline uppercase">Current Streak</h2>
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined fill-icon text-amber-500 drop-shadow-[0_0_8px_rgba(245,158,11,0.6)]">local_fire_department</span>
+            <span class="font-display-hero text-display-hero text-on-surface" id="rewards-streak">14 <span class="text-stat-number text-outline">Days</span></span>
+          </div>
+        </div>
+        <div class="text-right"><span class="font-label-caps text-label-caps text-secondary" id="rewards-tier-pct">85% to Next Tier</span></div>
+      </div>
+      <div class="relative w-full h-xp-bar-height bg-surface-variant rounded-full overflow-hidden">
+        <div class="absolute top-0 left-0 h-full bg-gradient-to-r from-secondary-container to-secondary rounded-full shadow-[0_0_12px_rgba(78,222,163,0.4)] xp-shimmer" id="rewards-tier-bar" style="width:85%"></div>
+      </div>
+    </div>
+
+    <div class="flex flex-col py-4 mb-8" id="reward-track"></div>
+
+
+    <div class="glass-card rounded-2xl overflow-hidden relative mb-8">
+      <div class="relative z-10 p-4">
+        <div class="flex justify-between items-start mb-6">
+          <div>
+            <h4 class="font-label-caps text-label-caps text-tertiary">ULTIMATE PRIZE</h4>
+            <h2 class="font-display-hero text-3xl text-on-surface">Royal King's Crown</h2>
+          </div>
+          <div class="bg-tertiary-container text-on-tertiary-container px-3 py-1 rounded-lg font-label-caps text-[10px]">LEGENDARY</div>
+        </div>
+        <div class="aspect-video rounded-xl bg-surface-container-highest mb-6 overflow-hidden border-2 border-tertiary/20 flex items-center justify-center">
+          <span class="material-symbols-outlined text-tertiary/50 text-7xl">workspace_premium</span>
+        </div>
+        <p class="text-on-surface-variant text-sm mb-6 leading-relaxed">Complete your 30-day "Zenith Sleep" streak to unlock this exclusive legendary cosmetic. Only 0.5% of players have attained this rank.</p>
+        <button class="w-full py-4 bg-transparent border-2 border-tertiary text-tertiary font-headline-lg-mobile text-lg rounded-xl hover:bg-tertiary/10 active:scale-95 transition-all" onclick="toast('Full reward calendar coming soon')">VIEW ALL REWARDS</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CLANS ============ -->
+  <section class="view" id="view-clans">
+    <div class="glass-card rounded-xl p-5 mb-4">
+      <div class="flex justify-between items-start mb-3">
+        <h2 class="font-display-hero text-2xl text-primary">Dream Walkers</h2>
+        <span class="bg-surface-container-highest border border-outline-variant/40 px-2 py-1 rounded-full font-label-caps text-[10px] text-outline">RANK #42</span>
+      </div>
+      <p class="flex items-center gap-1 text-secondary font-stat-number text-lg mb-4"><span class="material-symbols-outlined fill-icon text-base">star</span> 1,240,500 <span class="text-xs text-on-surface-variant font-normal ml-1">TOTAL CP</span></p>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="glass-card rounded-lg p-3"><p class="font-label-caps text-[10px] text-outline mb-1">MEMBERS</p><p class="font-stat-number text-lg">48/50</p></div>
+        <div class="glass-card rounded-lg p-3"><p class="font-label-caps text-[10px] text-outline mb-1">LEAGUE</p><p class="font-stat-number text-lg text-secondary">Diamond II</p></div>
+      </div>
+    </div>
+
+    <div class="glass-card rounded-xl p-4 border border-secondary/40 mb-6 active-glow">
+      <div class="flex justify-between items-start mb-2">
+        <div>
+          <p class="font-headline-lg-mobile text-lg">Synchronized Wake-Up</p>
+          <p class="text-xs text-on-surface-variant">Global Sync Bonus active in 12h</p>
+        </div>
+        <span class="font-stat-number text-secondary" id="clan-goal-pct">85%</span>
+      </div>
+      <div class="w-full h-2 bg-surface-variant rounded-full overflow-hidden mb-3">
+        <div class="h-full bg-gradient-to-r from-tertiary to-primary-container" id="clan-goal-bar" style="width:85%"></div>
+      </div>
+      <button class="w-full text-center bg-surface-container-highest py-2 rounded-lg font-label-caps text-[11px]" onclick="toast('Rewards preview: 2x XP for 24h + 500 coins')">VIEW REWARDS</button>
+    </div>
+
+    <section class="mb-6">
+      <div class="flex justify-between items-center mb-3">
+        <h2 class="font-label-caps text-label-caps text-secondary uppercase tracking-widest">Top Contributors</h2>
+        <span class="font-label-caps text-[10px] text-outline">THIS WEEK</span>
+      </div>
+      <div class="space-y-2">
+        <div class="glass-card rounded-lg p-3 flex items-center justify-between">
+          <div class="flex items-center gap-3"><span class="w-6 h-6 rounded-full bg-secondary text-on-secondary flex items-center justify-center text-xs font-bold">1</span><div><p class="font-bold">Nightstalker</p><p class="text-[10px] text-secondary font-label-caps">CLAN CAPTAIN</p></div></div>
+          <span class="font-stat-number text-sm">12.4K</span>
+        </div>
+        <div class="glass-card rounded-lg p-3 flex items-center justify-between">
+          <div class="flex items-center gap-3"><span class="w-6 h-6 rounded-full bg-surface-container-highest flex items-center justify-center text-xs font-bold">2</span><div><p class="font-bold">SleepyPanda</p><p class="text-[10px] text-outline font-label-caps">VETERAN</p></div></div>
+          <span class="font-stat-number text-sm">9.8K</span>
+        </div>
+        <div class="glass-card rounded-lg p-3 flex items-center justify-between">
+          <div class="flex items-center gap-3"><span class="w-6 h-6 rounded-full bg-surface-container-highest flex items-center justify-center text-xs font-bold">3</span><div><p class="font-bold">Insomni-Axel</p><p class="text-[10px] text-outline font-label-caps">ELITE</p></div></div>
+          <span class="font-stat-number text-sm">8.1K</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="mb-6">
+      <h2 class="font-label-caps text-label-caps text-secondary uppercase tracking-widest mb-3">Clan Activity</h2>
+      <div class="glass-card rounded-xl divide-y divide-white/5" id="clan-activity"></div>
+    </section>
+
+    <div class="space-y-3">
+      <button onclick="joinRaid()" class="w-full py-4 bg-primary-container text-on-primary-container rounded-xl font-headline-lg-mobile text-lg shadow-[0_4px_0_0_#5b21b6] active-press active:shadow-none transition-all">JOIN RAID</button>
+      <button onclick="toast('Invite link copied to clipboard')" class="w-full py-3 bg-transparent border-2 border-tertiary text-tertiary rounded-xl font-headline-lg-mobile">Invite Friends</button>
+    </div>
+  </section>
+
+  <!-- ============ SHOP ============ -->
+  <section class="view" id="view-shop">
+    <div class="glass-card rounded-xl overflow-hidden mb-4">
+      <div class="p-4 flex items-center justify-center bg-surface-container-highest/50">
+        <span class="material-symbols-outlined text-primary/50 text-7xl">diversity_3</span>
+      </div>
+      <div class="p-4 flex items-center justify-between">
+        <div>
+          <p class="font-headline-lg-mobile text-lg">Cyber-Wraith MK.II</p>
+          <p class="text-[10px] font-label-caps text-secondary">EPIC SKIN &bull; SEASON 4</p>
+        </div>
+        <button onclick="buyItem('featured', 4500, this)" class="battle-button bg-primary text-on-primary px-4 py-2 rounded-lg font-label-caps text-xs">BUY &bull; 4,500</button>
+      </div>
+    </div>
+
+    <div class="flex gap-2 mb-4" id="shop-filters">
+      <button data-cat="Skins" class="shop-filter-btn bg-primary text-on-primary px-3 py-1.5 rounded-full text-xs font-bold">Skins</button>
+      <button data-cat="Accessories" class="shop-filter-btn bg-surface-container-high text-on-surface-variant px-3 py-1.5 rounded-full text-xs font-bold">Accessories</button>
+      <button data-cat="Backgrounds" class="shop-filter-btn bg-surface-container-high text-on-surface-variant px-3 py-1.5 rounded-full text-xs font-bold">Backgrounds</button>
+    </div>
+
+    <div class="grid grid-cols-2 gap-3 mb-6" id="shop-grid"></div>
+
+    <div class="glass-card p-4 rounded-xl border border-secondary/40 mb-2">
+      <div class="flex justify-between items-center mb-1">
+        <p class="font-headline-lg-mobile text-lg text-secondary">Season 4 Elite Pack</p>
+      </div>
+      <p class="text-xs text-on-surface-variant mb-3">Get 5 items + Exclusive Aura</p>
+      <button id="bundle-btn" onclick="buyBundle()" class="w-full py-3 bg-secondary text-on-secondary rounded-xl font-headline-lg-mobile battle-button">CLAIM BUNDLE &bull; 7,500</button>
+    </div>
+  </section>
+
+</main>
+
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 rounded-t-xl bg-surface-container-lowest/90 backdrop-blur-xl border-t border-white/5 shadow-[0_-8px_24px_rgba(0,0,0,0.5)] flex justify-around items-center px-2 py-3 pb-safe">
+  <div class="navbtn active flex flex-col items-center justify-center rounded-xl px-3 py-1 active:scale-90 duration-150 cursor-pointer transition-colors" data-view="home" onclick="goTo('home')">
+    <span class="material-symbols-outlined fill-icon">home</span><span class="font-label-caps text-[10px] mt-0.5">Home</span>
+  </div>
+  <div class="navbtn flex flex-col items-center justify-center text-outline p-2 hover:text-primary active:scale-90 duration-150 cursor-pointer transition-colors" data-view="alarms" onclick="goTo('alarms')">
+    <span class="material-symbols-outlined">alarm</span><span class="font-label-caps text-[10px] mt-0.5">Alarms</span>
+  </div>
+  <div class="navbtn flex flex-col items-center justify-center text-outline p-2 hover:text-primary active:scale-90 duration-150 cursor-pointer transition-colors" data-view="rewards" onclick="goTo('rewards')">
+    <span class="material-symbols-outlined">military_tech</span><span class="font-label-caps text-[10px] mt-0.5">Rewards</span>
+  </div>
+  <div class="navbtn flex flex-col items-center justify-center text-outline p-2 hover:text-primary active:scale-90 duration-150 cursor-pointer transition-colors" data-view="clans" onclick="goTo('clans')">
+    <span class="material-symbols-outlined">groups</span><span class="font-label-caps text-[10px] mt-0.5">Clans</span>
+  </div>
+  <div class="navbtn flex flex-col items-center justify-center text-outline p-2 hover:text-primary active:scale-90 duration-150 cursor-pointer transition-colors" data-view="shop" onclick="goTo('shop')">
+    <span class="material-symbols-outlined">shopping_cart</span><span class="font-label-caps text-[10px] mt-0.5">Shop</span>
+  </div>
+</nav>
+
+</div><!-- /app-shell -->
+
+<script>
+/* ---------------- STATE ---------------- */
+const state = {
+  level: 18, title: "Nightstalker",
+  xp: 14250, xpToNext: 15000,
+  coins: 12450,
+  streak: 14,
+  todayScore: -45,
+  alarmActive: true,
+  pushups: 0, pushupTarget: 15, pushupDone:false, pushupBusy:false,
+  quizUnlocked: false, quizDone:false, quizAnswers:{},
+  photoCaptured: false, photoScanning:false,
+  challengesDone:false,
+  alarms: [
+    {id:1, time:"07:45", days:"M T W T F", tag:"2x XP MULTIPLIER", active:true},
+    {id:2, time:"09:00", days:"S S", tag:"SLEEP RECOVERY", active:false},
+  ],
+  rewards: [
+    {day:3, name:"Bronze Chest", icon:"inventory_2", state:"claimed", coins:150, xp:100},
+    {day:7, name:"Neon Visor Skin", icon:"stars", state:"claimed", coins:250, xp:150},
+    {day:12, name:"Gold Chest", icon:"redeem", state:"claimed", coins:400, xp:250},
+    {day:14, name:"Vortex Aura", icon:"auto_awesome", state:"claimable", coins:500, xp:300},
+    {day:21, name:"Mythic Box", icon:"workspace_premium", state:"locked", coins:800, xp:500},
+  ],
+  clanActivity: [
+    {icon:"trending_up", text:"<b class='text-primary'>Nightstalker</b> earned <b class='text-secondary'>500 XP</b> from a Perfect Sleep session.", time:"2 minutes ago"},
+    {icon:"sync_alt", text:"<b class='text-primary'>UserX</b> completed a <b class='text-secondary'>15 Pushup</b> morning challenge!", time:"15 minutes ago"},
+    {icon:"emoji_events", text:"Clan reached <b class='text-tertiary'>Level 5</b>. Global rank increased!", time:"1 hour ago"},
+    {icon:"person_add", text:"<b class='text-primary'>Dreamer09</b> joined the clan.", time:"2 hours ago"},
+  ],
+  shopCat: "Skins",
+  shopItems: [
+    {id:"neon-ronin", name:"Neon Ronin", cat:"Skins", price:3200, rarity:"LEGENDARY", icon:"sports_motorsports"},
+    {id:"grav-stompers", name:"Grav-Stompers", cat:"Accessories", price:1500, rarity:"RARE", icon:"footprint"},
+    {id:"data-mantle", name:"Data-Stream Mantle", cat:"Skins", price:2800, rarity:"EPIC", icon:"bolt"},
+    {id:"neural-spike", name:"Neural Spike", cat:"Accessories", price:800, rarity:"COMMON", icon:"psychology"},
+    {id:"void-grid", name:"Void Grid", cat:"Backgrounds", price:1200, rarity:"RARE", icon:"grid_4x4"},
+    {id:"aurora-drift", name:"Aurora Drift", cat:"Backgrounds", price:2200, rarity:"EPIC", icon:"gradient"},
+  ],
+  owned: new Set(),
+  bundleClaimed:false,
+};
+
+/* ---------------- HELPERS ---------------- */
+function toast(msg){
+  const wrap = document.getElementById('toast-wrap');
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = msg;
+  wrap.appendChild(el);
+  setTimeout(()=> el.remove(), 2600);
+}
+function fmt(n){ return n.toLocaleString('en-US'); }
+
+function goTo(view){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+view).classList.add('active');
+  document.querySelectorAll('.navbtn').forEach(n=>{
+    const isActive = n.dataset.view === view;
+    n.classList.toggle('active', isActive);
+    n.style.background = isActive ? '#6d28d9' : '';
+    n.style.color = isActive ? '#dac5ff' : '#958da1';
+    n.style.boxShadow = isActive ? '0 0 12px rgba(124,58,237,.45)' : '';
+    const icon = n.querySelector('.material-symbols-outlined');
+    icon.classList.toggle('fill-icon', isActive);
+  });
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* ---------------- RENDER ---------------- */
+function renderHeader(){
+  document.getElementById('hdr-title').innerHTML = `Lvl ${state.level}<br/>${state.title}`;
+  document.getElementById('hdr-coins').textContent = fmt(state.coins);
+}
+
+function renderHome(){
+  document.getElementById('home-xp-label').innerHTML = `${fmt(state.xp)} <span class="text-on-surface-variant text-sm font-normal">/ ${fmt(state.xpToNext)}</span>`;
+  document.getElementById('home-xp-bar').style.width = Math.min(100, (state.xp/state.xpToNext*100)) + '%';
+  document.getElementById('home-streak').textContent = state.streak;
+
+  const scoreEl = document.getElementById('home-score');
+  const scoreLabel = document.getElementById('home-score-label');
+  const scoreIcon = document.getElementById('home-score-icon');
+  const scoreCard = document.getElementById('home-score-card');
+  if(state.todayScore >= 0){
+    scoreEl.textContent = '+' + state.todayScore;
+    scoreEl.className = 'font-display-hero text-display-hero leading-none text-secondary';
+    scoreLabel.textContent = 'Perfect Sleep Bonus';
+    scoreLabel.className = 'text-xs text-secondary/80 mt-1 font-medium';
+    scoreIcon.textContent = 'trending_up';
+    scoreIcon.className = 'material-symbols-outlined text-secondary text-4xl';
+    scoreCard.className = 'glass-card rounded-xl p-4 flex flex-col justify-between aspect-square border-secondary/20';
+  } else {
+    scoreEl.textContent = state.todayScore;
+    scoreEl.className = 'font-display-hero text-display-hero leading-none text-error';
+    scoreLabel.textContent = 'Inconsistency Penalty';
+    scoreLabel.className = 'text-xs text-error/80 mt-1 font-medium';
+    scoreIcon.textContent = 'trending_down';
+    scoreIcon.className = 'material-symbols-outlined text-error text-4xl';
+    scoreCard.className = 'glass-card rounded-xl p-4 flex flex-col justify-between aspect-square border-error/20';
+  }
+
+  const toggle = document.getElementById('home-alarm-toggle');
+  const label = document.getElementById('home-alarm-status-label');
+  if(state.alarmActive){
+    toggle.style.background = '#e3aa00';
+    toggle.style.boxShadow = '0 0 10px rgba(227,170,0,0.5)';
+    toggle.style.justifyContent = 'flex-end';
+    label.textContent = 'ACTIVE'; label.className = 'text-xs font-label-caps text-secondary';
+  } else {
+    toggle.style.background = '#26364a';
+    toggle.style.boxShadow = 'none';
+    toggle.style.justifyContent = 'flex-start';
+    label.textContent = 'OFF'; label.className = 'text-xs font-label-caps text-outline';
+  }
+}
+document.getElementById('home-alarm-toggle').addEventListener('click', ()=>{
+  state.alarmActive = !state.alarmActive;
+  renderHome();
+  toast(state.alarmActive ? 'Neural Awakening armed for 06:30' : 'Neural Awakening disabled');
+});
+
+function renderAlarms(){
+  const list = document.getElementById('alarms-list');
+  list.innerHTML = state.alarms.map(a => `
+    <div class="glass-card p-4 rounded-xl flex items-center justify-between ${a.active ? '' : 'opacity-60'} transition-opacity">
+      <div class="flex flex-col">
+        <span class="font-display-hero text-[32px] text-on-surface">${a.time} <span class="text-label-caps text-lg">AM</span></span>
+        <div class="flex items-center gap-2">
+          <span class="font-label-caps text-[10px] text-outline">${a.days}</span>
+          <span class="w-1 h-1 rounded-full bg-outline"></span>
+          <span class="font-label-caps text-[10px] ${a.active ? 'text-secondary' : 'text-outline'} flex items-center gap-1">
+            <span class="material-symbols-outlined text-[12px]">bolt</span> ${a.tag}
+          </span>
+        </div>
+      </div>
+      <div onclick="toggleAlarm(${a.id})" class="w-12 h-6 rounded-full relative border border-outline-variant cursor-pointer transition-colors" style="background:${a.active ? '#e3aa00' : '#26364a'}">
+        <div class="absolute top-0.5 w-4.5 h-4.5 bg-white rounded-full transition-all duration-200" style="left:${a.active ? '26px' : '2px'}; box-shadow:${a.active ? '0 0 10px #e3aa00' : 'none'}"></div>
+      </div>
+    </div>
+  `).join('');
+}
+function toggleAlarm(id){
+  const a = state.alarms.find(a=>a.id===id);
+  a.active = !a.active;
+  renderAlarms();
+  toast(a.active ? `Raid armed for ${a.time} AM` : `Raid disabled`);
+}
+
+function doPushup(){
+  if(state.pushupDone || state.pushupBusy) return;
+  state.pushupBusy = true;
+  const btn = document.getElementById('pushup-btn');
+  btn.disabled = true;
+  btn.textContent = 'VERIFYING FORM...';
+  setTimeout(()=>{
+    state.pushups = Math.min(state.pushupTarget, state.pushups+1);
+    const el = document.getElementById('pushup-counter');
+    el.textContent = `${state.pushups}/${state.pushupTarget}`;
+    el.classList.add('animate-bounce');
+    setTimeout(()=>el.classList.remove('animate-bounce'), 250);
+    state.pushupBusy = false;
+    if(state.pushups >= state.pushupTarget){
+      state.pushupDone = true;
+      btn.textContent = 'PUSHUPS COMPLETE';
+      btn.classList.add('opacity-60');
+      awardXP(80);
+      toast('Pushup challenge complete! +80 XP — Quiz unlocked');
+      unlockQuiz();
+    } else {
+      btn.disabled = false;
+      btn.textContent = `LOG REP (${state.pushups}/${state.pushupTarget})`;
+    }
+    checkChallengesComplete();
+  }, 450);
+}
+
+function unlockQuiz(){
+  state.quizUnlocked = true;
+  const status = document.getElementById('quiz-status');
+  const btn = document.getElementById('quiz-btn');
+  status.textContent = '3 QUESTIONS \u2022 DIFFICULTY: HARD';
+  btn.disabled = false;
+  btn.classList.remove('bg-surface-container-highest','text-outline','cursor-not-allowed');
+  btn.classList.add('bg-primary','text-on-primary');
+  document.getElementById('quiz-icon').textContent = 'lock_open';
+}
+
+const QUIZ_QUESTIONS = [
+  {q:'What does REM stand for?', options:['Rapid Eye Movement','Restful Evening Mode','Recovery Energy Metric'], correct:0},
+  {q:'Which hormone regulates your sleep cycle?', options:['Insulin','Melatonin','Adrenaline'], correct:1},
+  {q:'Recommended sleep for a teenager?', options:['4-5 hours','6-7 hours','8-10 hours'], correct:2},
+];
+
+function openQuiz(){
+  if(!state.quizUnlocked || state.quizDone) return;
+  const overlay = document.createElement('div');
+  overlay.className = 'stasis-overlay';
+  overlay.style.padding = '24px';
+  overlay.style.zIndex = '250';
+  overlay.onclick = (e)=>{ if(e.target === overlay) overlay.remove(); };
+  overlay.innerHTML = `
+    <div class="glass-card rounded-2xl p-5 w-full max-w-sm space-y-5 relative" id="quiz-card">
+      <button onclick="this.closest('.stasis-overlay').remove()" class="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full bg-surface-container-highest text-outline hover:text-on-surface">
+        <span class="material-symbols-outlined text-lg">close</span>
+      </button>
+      <h3 class="font-headline-lg-mobile text-xl text-primary pr-8">Year 11 Math Quiz</h3>
+      ${QUIZ_QUESTIONS.map((q,qi)=>`
+        <div>
+          <p class="text-sm font-bold mb-2">${qi+1}. ${q.q}</p>
+          <div class="flex flex-col gap-2">
+            ${q.options.map((opt,oi)=>`
+              <button type="button" data-q="${qi}" data-o="${oi}" onclick="selectQuizOption(${qi},${oi})" class="quiz-opt text-left px-3 py-2 rounded-lg border border-outline-variant/40 text-sm hover:border-primary transition-colors">${opt}</button>
+            `).join('')}
+          </div>
+        </div>
+      `).join('')}
+      <div class="flex gap-3">
+        <button onclick="this.closest('.stasis-overlay').remove()" class="flex-1 py-2.5 rounded-lg border border-outline-variant text-outline font-label-caps text-xs">CANCEL</button>
+        <button id="quiz-submit" onclick="submitQuiz()" class="flex-1 py-2.5 rounded-lg bg-primary-container text-on-primary-container font-label-caps text-xs battle-button">SUBMIT</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  state.quizAnswers = {};
+}
+function selectQuizOption(qi, oi){
+  state.quizAnswers[qi] = oi;
+  document.querySelectorAll(`.quiz-opt[data-q="${qi}"]`).forEach(b=>{
+    const chosen = Number(b.dataset.o) === oi;
+    b.style.borderColor = chosen ? '#d3bbff' : '';
+    b.style.background = chosen ? 'rgba(124,58,237,0.25)' : '';
+  });
+}
+function submitQuiz(){
+  const total = QUIZ_QUESTIONS.length;
+  const answered = Object.keys(state.quizAnswers || {}).length;
+  if(answered < total){ toast('Answer every question first'); return; }
+  const allCorrect = QUIZ_QUESTIONS.every((q,qi)=> state.quizAnswers[qi] === q.correct);
+  if(allCorrect){
+    state.quizDone = true;
+    document.querySelector('.stasis-overlay').remove();
+    const status = document.getElementById('quiz-status');
+    const btn = document.getElementById('quiz-btn');
+    status.textContent = 'COMPLETE';
+    btn.disabled = true;
+    document.getElementById('quiz-icon').textContent = 'check_circle';
+    awardXP(60);
+    toast('Quiz passed! +60 XP');
+    checkChallengesComplete();
+  } else {
+    toast('Not quite — check your answers and try again');
+  }
+}
+
+function captureTask(){
+  if(state.photoCaptured || state.photoScanning) return;
+  state.photoScanning = true;
+  const btn = document.getElementById('capture-btn');
+  const status = document.getElementById('photo-status');
+  const iconWrap = document.getElementById('photo-icon-wrap');
+  const icon = document.getElementById('photo-icon');
+  btn.disabled = true;
+  btn.textContent = 'SCANNING...';
+  status.textContent = 'HOLD STEADY \u2014 LOCATING QR CODE';
+  setTimeout(()=>{
+    state.photoScanning = false;
+    state.photoCaptured = true;
+    status.innerHTML = '<span class="text-secondary font-bold">\u2713 VERIFIED</span>';
+    btn.innerHTML = '<span class="material-symbols-outlined text-sm align-middle">check_circle</span> DONE';
+    btn.classList.add('bg-secondary','text-on-secondary');
+    btn.classList.remove('bg-primary','text-on-primary');
+    icon.textContent = 'check_circle';
+    icon.classList.add('fill-icon');
+    iconWrap.classList.add('bg-secondary/20','border-secondary/50','text-secondary');
+    iconWrap.classList.remove('bg-primary/10','border-primary/20','text-primary');
+    awardXP(40);
+    toast('Kitchen scan verified! +40 XP');
+    checkChallengesComplete();
+  }, 1800);
+}
+
+function checkChallengesComplete(){
+  state.challengesDone = state.pushupDone && state.quizDone && state.photoCaptured;
+  const done = [state.pushupDone, state.quizDone, state.photoCaptured].filter(Boolean).length;
+  document.getElementById('challenge-progress-label').textContent = `${done} / 3 challenges complete`;
+  document.getElementById('challenge-progress-note').textContent = state.challengesDone ? 'STASIS UNLOCKED' : '';
+  const stasisBtn = document.getElementById('stasis-btn');
+  if(state.challengesDone){
+    stasisBtn.disabled = false;
+    stasisBtn.classList.remove('opacity-50','cursor-not-allowed');
+  } else {
+    stasisBtn.disabled = true;
+    stasisBtn.classList.add('opacity-50','cursor-not-allowed');
+  }
+}
+
+function renderRewards(){
+  document.getElementById('rewards-streak').innerHTML = `${state.streak} <span class="text-stat-number text-outline">Days</span>`;
+  const pct = Math.min(100, Math.round((state.streak/16)*100));
+  document.getElementById('rewards-tier-pct').textContent = pct + '% to Next Tier';
+  document.getElementById('rewards-tier-bar').style.width = pct + '%';
+
+  const track = document.getElementById('reward-track');
+  track.innerHTML = '';
+
+  state.rewards.forEach((r, i) => {
+    const claimed = r.state === 'claimed';
+    const claimable = r.state === 'claimable';
+    const locked = r.state === 'locked';
+    const isLast = i === state.rewards.length - 1;
+    const row = document.createElement('div');
+    row.className = 'flex gap-4';
+    row.innerHTML = `
+      <div class="flex flex-col items-center flex-shrink-0">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center border-4 border-surface ${claimed ? 'bg-secondary shadow-[0_0_15px_rgba(78,222,163,0.5)]' : claimable ? 'bg-primary-container active-glow' : 'bg-surface-variant shadow-inner'}">
+          <span class="material-symbols-outlined ${claimed ? 'text-on-secondary' : claimable ? 'text-on-primary-container' : 'text-outline'} font-bold text-sm">${claimed ? 'check' : claimable ? 'redeem' : 'lock'}</span>
+        </div>
+        ${isLast ? '' : `<div class="w-0.5 flex-1 my-1 rounded-full" style="background:${claimed || claimable ? '#7c3aed' : '#334155'}"></div>`}
+      </div>
+      <div class="glass-card rounded-xl flex gap-4 items-center p-3 flex-1 mb-6 ${locked ? 'opacity-40' : claimed ? 'opacity-70' : ''}">
+        <div class="bg-surface-container-highest rounded-lg flex items-center justify-center border-2 border-outline-variant/30 w-11 h-11 flex-shrink-0">
+          <span class="material-symbols-outlined text-3xl ${locked?'text-outline-variant':'text-outline'}">${r.icon}</span>
+        </div>
+        <div class="flex-1">
+          <p class="font-label-caps text-label-caps ${claimable ? 'text-primary' : 'text-outline'}">DAY ${r.day}${claimable ? ' \u2022 ACTIVE' : ''}</p>
+          <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-tight">${r.name}</h3>
+          ${claimed ? '<span class="text-sm text-secondary">Claimed</span>' : ''}
+          ${locked ? '<span class="text-sm text-outline">Locked</span>' : ''}
+          ${claimable ? `<button onclick="claimReward(${r.day})" class="mt-2 bg-primary-container hover:bg-primary text-on-primary-container font-label-caps text-[10px] py-1 px-4 rounded-full shadow-[0_3px_0_#5a00c6] active-press active:shadow-none transition-all">CLAIM NOW</button>` : ''}
+        </div>
+      </div>
+    `;
+    track.appendChild(row);
+  });
+}
+function claimReward(day){
+  const r = state.rewards.find(r=>r.day===day);
+  if(!r || r.state !== 'claimable') return;
+  r.state = 'claimed';
+  state.coins += r.coins || 0;
+  awardXP(r.xp || 0, true);
+  renderRewards();
+  renderHeader();
+  toast(`${r.name} claimed! +${r.coins} coins, +${r.xp} XP`);
+}
+
+function renderClans(){
+  document.getElementById('clan-goal-pct').textContent = '85%';
+  const feed = document.getElementById('clan-activity');
+  feed.innerHTML = state.clanActivity.map(a => `
+    <div class="p-3 flex items-start gap-3">
+      <span class="material-symbols-outlined text-tertiary mt-0.5">${a.icon}</span>
+      <div class="flex-1"><p class="text-sm leading-snug">${a.text}</p><p class="text-[10px] text-outline mt-0.5">${a.time}</p></div>
+    </div>
+  `).join('');
+}
+function joinRaid(){
+  state.clanActivity.unshift({icon:'swords', text:`<b class="text-primary">You</b> joined the clan raid.`, time:'just now'});
+  renderClans();
+  toast('Raid joined — synchronized wake-up bonus tracking now');
+}
+
+function renderShop(){
+  document.querySelectorAll('.shop-filter-btn').forEach(b=>{
+    const on = b.dataset.cat === state.shopCat;
+    b.className = 'shop-filter-btn px-3 py-1.5 rounded-full text-xs font-bold ' + (on ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface-variant');
+  });
+  const grid = document.getElementById('shop-grid');
+  const rarityColor = {LEGENDARY:'text-secondary', EPIC:'text-primary', RARE:'text-tertiary', COMMON:'text-outline'};
+  grid.innerHTML = state.shopItems.filter(i=>i.cat === state.shopCat).map(item => {
+    const owned = state.owned.has(item.id);
+    return `
+    <div class="glass-card rounded-xl overflow-hidden flex flex-col">
+      <div class="aspect-square bg-surface-container-highest flex items-center justify-center relative">
+        <span class="material-symbols-outlined text-5xl text-primary/40">${item.icon}</span>
+        ${owned ? '<span class="absolute top-1.5 right-1.5 material-symbols-outlined fill-icon text-secondary text-lg">check_circle</span>' : ''}
+      </div>
+      <div class="p-3 flex flex-col gap-1">
+        <p class="font-bold text-sm leading-tight">${item.name}</p>
+        <div class="flex items-center justify-between">
+          <span class="font-stat-number text-sm">${owned ? 'OWNED' : fmt(item.price)}</span>
+          <span class="font-label-caps text-[9px] ${rarityColor[item.rarity]}">${item.rarity}</span>
+        </div>
+        ${owned ? '' : `<button onclick="buyItem('${item.id}', ${item.price}, this)" class="mt-1 battle-button bg-primary/90 text-on-primary rounded-lg py-1.5 text-[11px] font-label-caps">BUY</button>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+document.querySelectorAll('.shop-filter-btn').forEach(b=>{
+  b.addEventListener('click', ()=>{ state.shopCat = b.dataset.cat; renderShop(); });
+});
+function buyItem(id, price, btn){
+  if(state.owned.has(id)) return;
+  if(state.coins < price){ toast('Not enough coins'); return; }
+  state.coins -= price;
+  state.owned.add(id);
+  renderHeader();
+  renderShop();
+  if(btn){
+    btn.textContent = 'OWNED';
+    btn.disabled = true;
+    btn.classList.add('opacity-60');
+    btn.onclick = null;
+  }
+  toast('Item purchased! Equipped to loadout.');
+}
+function buyBundle(){
+  if(state.bundleClaimed) return;
+  if(state.coins < 7500){ toast('Not enough coins for bundle'); return; }
+  state.coins -= 7500;
+  state.bundleClaimed = true;
+  state.shopItems.forEach(i => state.owned.add(i.id));
+  const btn = document.getElementById('bundle-btn');
+  btn.textContent = 'CLAIMED';
+  btn.disabled = true;
+  btn.classList.add('opacity-60');
+  renderHeader();
+  renderShop();
+  toast('Season 4 Elite Pack claimed!');
+}
+
+function awardXP(amount, skipToast){
+  state.xp += amount;
+  while(state.xp >= state.xpToNext){
+    state.xp -= state.xpToNext;
+    state.level += 1;
+    state.xpToNext = Math.round(state.xpToNext * 1.08);
+    toast(`LEVEL UP! You reached Lvl ${state.level}`);
+  }
+  renderHeader();
+  renderHome();
+  if(!skipToast && amount) { /* toast already shown by caller in most cases */ }
+}
+
+/* ---------------- STASIS FLOW ---------------- */
+function enterStasis(){
+  if(!state.challengesDone){
+    toast("Finish today's 3 challenges before entering Stasis");
+    goTo('alarms');
+    return;
+  }
+  const btn = document.getElementById('stasis-btn');
+  btn.disabled = true;
+  const overlay = document.createElement('div');
+  overlay.className = 'stasis-overlay';
+  overlay.innerHTML = `
+    <button id="stasis-cancel" class="absolute top-6 right-6 w-9 h-9 flex items-center justify-center rounded-full bg-surface-container-highest text-outline hover:text-on-surface">
+      <span class="material-symbols-outlined">close</span>
+    </button>
+    <span class="material-symbols-outlined text-primary text-6xl fill-icon" style="animation:pulse-glow 1.6s infinite">bedtime</span>
+    <p class="font-headline-lg-mobile text-2xl text-primary">Entering Stasis...</p>
+    <p class="font-label-caps text-label-caps text-on-surface-variant" id="stasis-status">Calibrating sleep sensors</p>
+    <div class="w-48 h-2 bg-surface-variant rounded-full overflow-hidden"><div id="stasis-bar" class="h-full bg-gradient-to-r from-tertiary to-primary-container" style="width:0%"></div></div>
+  `;
+  document.body.appendChild(overlay);
+  const steps = ['Calibrating sleep sensors','Syncing neural rhythm','Simulating full night cycle','Scoring sleep quality'];
+  let step = 0;
+  const bar = overlay.querySelector('#stasis-bar');
+  const label = overlay.querySelector('#stasis-status');
+  const iv = setInterval(()=>{
+    step++;
+    bar.style.width = Math.min(100, step*25) + '%';
+    if(steps[step]) label.textContent = steps[step];
+    if(step >= 4){
+      clearInterval(iv);
+      setTimeout(()=>{
+        overlay.remove();
+        completeSleepSession();
+      }, 400);
+    }
+  }, 650);
+  overlay.querySelector('#stasis-cancel').onclick = ()=>{
+    clearInterval(iv);
+    overlay.remove();
+    btn.disabled = false;
+    toast('Stasis cancelled');
+  };
+}
+function resetDailyChallenges(){
+  state.pushups = 0; state.pushupDone = false; state.pushupBusy = false;
+  state.quizUnlocked = false; state.quizDone = false; state.quizAnswers = {};
+  state.photoCaptured = false; state.photoScanning = false;
+  document.getElementById('pushup-counter').textContent = `0/${state.pushupTarget}`;
+  const pBtn = document.getElementById('pushup-btn');
+  pBtn.disabled = false; pBtn.classList.remove('opacity-60'); pBtn.textContent = 'LOG REP (AI VERIFIES FORM)';
+  const qBtn = document.getElementById('quiz-btn');
+  qBtn.disabled = true;
+  qBtn.classList.add('bg-surface-container-highest','text-outline','cursor-not-allowed');
+  qBtn.classList.remove('bg-primary','text-on-primary');
+  document.getElementById('quiz-icon').textContent = 'lock';
+  document.getElementById('quiz-status').textContent = 'LOCKED \u2022 FINISH PUSHUPS FIRST';
+  const cBtn = document.getElementById('capture-btn');
+  cBtn.disabled = false; cBtn.textContent = 'CAPTURE';
+  cBtn.classList.remove('bg-secondary','text-on-secondary'); cBtn.classList.add('bg-primary','text-on-primary');
+  document.getElementById('photo-status').textContent = 'LOCATE & SCAN QR CODE';
+  const pIcon = document.getElementById('photo-icon');
+  const pIconWrap = document.getElementById('photo-icon-wrap');
+  pIcon.textContent = 'photo_camera';
+  pIcon.classList.remove('fill-icon');
+  pIconWrap.classList.remove('bg-secondary/20','border-secondary/50','text-secondary');
+  pIconWrap.classList.add('bg-primary/10','border-primary/20','text-primary');
+  checkChallengesComplete();
+}
+function completeSleepSession(){
+  state.streak += 1;
+  state.todayScore = 60 + Math.floor(Math.random()*60);
+  const xpGain = 200 + Math.floor(Math.random()*150);
+  state.coins += 50;
+  awardXP(xpGain, true);
+  const milestone = state.rewards.find(r => r.day === state.streak && r.state === 'locked');
+  if(milestone){ milestone.state = 'claimable'; }
+  resetDailyChallenges();
+  renderHome(); renderRewards(); renderHeader();
+  toast(`Session complete! +${xpGain} XP, +50 coins, streak ${state.streak}`);
+}
+
+/* ---------------- INIT ---------------- */
+renderHeader();
+renderHome();
+renderAlarms();
+renderRewards();
+renderClans();
+renderShop();
+checkChallengesComplete();
+goTo('home');
+</script>
+</body>
+</html>

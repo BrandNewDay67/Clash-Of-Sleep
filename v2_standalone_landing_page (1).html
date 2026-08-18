@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Clash of Sleep — Waking Up Is a Game. Start Winning It.</title>
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --bg:#0b0f2e; --bg-deep:#05081d;
+    --glass: rgba(255,255,255,0.04);
+    --glass-brd: rgba(255,255,255,0.08);
+    --text:#eef1fb; --text-dim:#9096b8;
+    --orange:#fa9e5d; --orange-dark:#e07f3c;
+    --pink:#ff6f9c; --purple:#b98aff; --blue:#5b9dff; --teal:#45d9c0;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{ margin:0; background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+  h1,h2,h3,.display{ font-family:'Pixelify Sans',sans-serif; font-weight:700; letter-spacing:0; margin:0; }
+  .mono{ font-family:'JetBrains Mono',monospace; letter-spacing:0.1em; text-transform:uppercase; }
+  .wrap{ max-width:1080px; margin:0 auto; padding:0 24px; }
+  a{ color:inherit; text-decoration:none; }
+
+  .bg-glow{ position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(650px 450px at 20% -8%, rgba(250,158,93,0.16), transparent 60%),
+      radial-gradient(600px 420px at 95% 15%, rgba(185,138,255,0.14), transparent 60%),
+      radial-gradient(700px 450px at 50% 120%, rgba(69,217,192,0.08), transparent 60%);
+  }
+
+  nav{ position:sticky; top:0; z-index:50; backdrop-filter:blur(14px); background:rgba(5,8,29,0.75); border-bottom:1px solid var(--glass-brd); }
+  .navbar{ display:flex; align-items:center; justify-content:space-between; padding:16px 24px; max-width:1080px; margin:0 auto; }
+  .brand{ display:flex; align-items:center; gap:10px; font-size:17px; font-weight:700; }
+  .brand-badge{ width:32px; height:32px; border-radius:9px; background:linear-gradient(145deg,var(--orange),var(--pink)); display:flex; align-items:center; justify-content:center; font-size:15px; box-shadow:0 0 16px rgba(250,158,93,0.4); }
+  .navlinks{ display:flex; gap:30px; font-size:14px; color:var(--text-dim); }
+  .navlinks a:hover{ color:var(--orange); }
+  @media(max-width:520px){ .navlinks{ gap:16px; font-size:12px; } }
+
+  .hero{ position:relative; z-index:2; padding:72px 0 60px; }
+  .hero-grid{ display:grid; grid-template-columns:1.05fr 0.85fr; gap:48px; align-items:center; }
+  @media(max-width:880px){ .hero-grid{ grid-template-columns:1fr; } }
+  .eyebrow{ display:inline-flex; align-items:center; gap:8px; font-size:11px; color:var(--orange); background:rgba(250,158,93,0.1); border:1px solid rgba(250,158,93,0.3); padding:6px 14px; border-radius:999px; margin-bottom:22px; font-weight:600; }
+  .hero h1{ font-size:clamp(34px,5vw,52px); line-height:1.12; }
+  .hero p.lede{ font-size:16px; line-height:1.65; color:var(--text-dim); max-width:440px; margin:20px 0 30px; }
+  .hero-ctas{ display:flex; gap:14px; flex-wrap:wrap; margin-bottom:30px; }
+  .btn-primary{ background:linear-gradient(135deg,var(--orange),var(--orange-dark)); color:#1a0e02; padding:15px 26px; border-radius:14px; font-weight:700; font-size:15px; box-shadow:0 5px 0 #a95c22; transition:transform .12s,box-shadow .12s; display:inline-flex; align-items:center; gap:8px; }
+  .btn-primary:active{ transform:translateY(4px); box-shadow:none; }
+  .btn-ghost{ background:transparent; border:2px solid rgba(255,255,255,0.18); color:var(--text); padding:13px 24px; border-radius:14px; font-weight:600; font-size:15px; }
+  .btn-ghost:hover{ background:rgba(255,255,255,0.05); }
+  .stat-row{ display:flex; gap:28px; flex-wrap:wrap; }
+  .stat b{ font-family:'Pixelify Sans',sans-serif; font-size:20px; display:block; color:var(--orange); }
+  .stat span{ font-size:11px; color:var(--text-dim); }
+
+  .phone{ position:relative; margin:0 auto; width:230px; background:linear-gradient(160deg,#2a1a52,#1c1140); border-radius:32px; padding:16px; box-shadow:0 30px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06); }
+  .phone-notch{ width:60px; height:6px; background:rgba(255,255,255,0.15); border-radius:99px; margin:0 auto 14px; }
+  .phone-clock{ font-family:'Pixelify Sans',sans-serif; font-size:38px; font-weight:700; text-align:center; margin-bottom:4px; }
+  .phone-sub{ text-align:center; font-size:10px; color:#c3b8ea; margin-bottom:16px; }
+  .phone-card{ background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:12px; margin-bottom:10px; }
+  .phone-card .tag{ font-size:9px; color:var(--orange); font-weight:700; margin-bottom:4px; }
+  .phone-card .txt{ font-size:11px; color:#e4defa; }
+  .phone-card .sub{ font-size:9.5px; color:#9c8fc4; margin-top:3px; }
+
+  section{ position:relative; z-index:2; padding:76px 0; }
+  .kicker{ font-size:11px; color:var(--purple); margin-bottom:12px; font-weight:700; }
+  .sec-head{ max-width:540px; margin-bottom:44px; }
+  .sec-head h2{ font-size:clamp(26px,3.4vw,38px); line-height:1.15; }
+  .sec-head p{ color:var(--text-dim); margin-top:12px; font-size:15.5px; line-height:1.6; }
+
+  .loop-wrap{ position:relative; }
+  .loop{ display:flex; gap:16px; overflow-x:auto; scroll-snap-type:x mandatory; padding-bottom:6px; scrollbar-width:none; }
+  .loop::-webkit-scrollbar{ display:none; }
+  .loop-card{ flex:0 0 auto; width:200px; scroll-snap-align:start; background:var(--glass); border:1px solid var(--glass-brd); border-radius:18px; padding:20px; position:relative; }
+  .loop-num{ width:30px; height:30px; border-radius:9px; background:rgba(250,158,93,0.15); color:var(--orange); font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center; margin-bottom:16px; }
+  .loop-arrow{ position:absolute; top:50%; transform:translateY(-50%); width:34px; height:34px; border-radius:50%; background:var(--glass); border:1px solid var(--glass-brd); color:var(--text); display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:3; }
+  .loop-arrow:hover{ background:rgba(255,255,255,0.1); }
+  .loop-arrow.prev{ left:-14px; }
+  .loop-arrow.next{ right:-14px; }
+  .loop-track{ height:5px; background:rgba(255,255,255,0.08); border-radius:99px; margin-top:18px; overflow:hidden; }
+  .loop-track-fill{ height:100%; width:25%; background:var(--orange); border-radius:99px; transition:width .2s; }
+  @media(max-width:520px){ .loop-arrow{ display:none; } }
+  .loop-card h3{ font-size:16px; margin-bottom:8px; }
+  .loop-card p{ font-size:13px; color:var(--text-dim); line-height:1.55; margin:0; }
+
+  .feat-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  @media(max-width:900px){ .feat-grid{ grid-template-columns:1fr 1fr; } }
+  @media(max-width:600px){ .feat-grid{ grid-template-columns:1fr; } }
+  .feat{ background:var(--glass); border:1px solid var(--glass-brd); border-radius:18px; padding:22px; transition:transform .2s, border-color .2s; }
+  .feat:hover{ transform:translateY(-3px); border-color:rgba(255,255,255,0.18); }
+  .feat .ic{ width:38px; height:38px; border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:18px; margin-bottom:14px; }
+  .feat h3{ font-size:15.5px; margin-bottom:8px; }
+  .feat p{ font-size:13px; color:var(--text-dim); line-height:1.55; margin:0; }
+  .feat.highlight{ border-color:rgba(69,217,192,0.4); box-shadow:0 0 30px rgba(69,217,192,0.08); }
+
+  .cta-band{ position:relative; z-index:2; margin:0 24px 80px; border-radius:26px; padding:64px 32px; text-align:center;
+    background:linear-gradient(180deg, rgba(250,158,93,0.1), transparent 60%), linear-gradient(180deg,#12173a,#0b0f2e); border:1px solid rgba(250,158,93,0.25); }
+  .cta-band h2{ font-size:clamp(26px,4vw,40px); margin-bottom:14px; }
+  .cta-band p{ color:var(--text-dim); max-width:420px; margin:0 auto 28px; font-size:14.5px; }
+
+  footer{ position:relative; z-index:2; border-top:1px solid var(--glass-brd); padding:28px 0; }
+  .foot-row{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; font-size:12px; color:var(--text-dim); }
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<nav>
+  <div class="navbar" style="justify-content:center; gap:36px;">
+    <div class="navlinks" style="gap:36px;">
+      <a href="#loop">How it works</a>
+      <a href="#features">Features</a>
+      <a href="#rewards">Rewards</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">✦ HELP THEM SEE THEMSELVES WINNING</div>
+      <h1>Waking up is a game.<br/>Start winning it.</h1>
+      <p class="lede">Clash of Sleep turns your alarm into a challenge, your streak into a journey, and being on time into a leaderboard flex — so mornings finally stop being the enemy.</p>
+      <div class="hero-ctas">
+        <a href="clash_of_sleep.html" class="btn-primary">Start your streak</a>
+        <a href="#loop" class="btn-ghost">See how it works</a>
+      </div>
+      <div class="stat-row">
+        <div class="stat"><b>+35%</b><span>faster wake-up rate</span></div>
+        <div class="stat"><b>21 days</b><span>avg. streak record</span></div>
+        <div class="stat"><b>6</b><span>challenge types</span></div>
+      </div>
+    </div>
+
+    <div class="phone">
+      <div class="phone-notch"></div>
+      <div class="phone-clock">6:45</div>
+      <div class="phone-sub">Wake-Proof Challenge</div>
+      <div class="phone-card">
+        <div class="tag">PUSHUP CHALLENGE</div>
+        <div class="txt">Snap the kitchen</div>
+        <div class="sub">Hold your phone up to verify it's really you</div>
+      </div>
+      <div class="phone-card">
+        <div class="tag" style="color:var(--teal)">CLAN RANK</div>
+        <div class="txt">#42 globally &bull; Dream Walkers</div>
+        <div class="sub">2 clanmates already awake</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="loop">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker mono">The Core Loop</div>
+      <h2>One habit, gamified end to end.</h2>
+      <p>Every clash reinforces the same loop — sleep on time, prove you're awake, get rewarded, and clash it off with your clan.</p>
+    </div>
+    <div class="loop-wrap">
+      <div class="loop-arrow prev" onclick="scrollLoop(-1)">&#8249;</div>
+      <div class="loop" id="loop-track">
+        <div class="loop-card">
+          <div class="loop-num">1</div>
+          <h3>Set the alarm</h3>
+          <p>Pick a schedule that matches your lifestyle — no easy outs.</p>
+        </div>
+        <div class="loop-card">
+          <div class="loop-num">2</div>
+          <h3>Prove you're awake</h3>
+          <p>A room photo, timed quiz, or real rep challenge — before the alarm goes silent.</p>
+        </div>
+        <div class="loop-card">
+          <div class="loop-num">3</div>
+          <h3>Build the streak</h3>
+          <p>Consistency compounds into XP multipliers and Kingdom rewards.</p>
+        </div>
+        <div class="loop-card">
+          <div class="loop-num">4</div>
+          <h3>Clash your clan</h3>
+          <p>Compare wake times live with friends and climb the leaderboard together.</p>
+        </div>
+      </div>
+      <div class="loop-arrow next" onclick="scrollLoop(1)">&#8250;</div>
+      <div class="loop-track"><div class="loop-track-fill" id="loop-fill"></div></div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const loopEl = document.getElementById('loop-track');
+  const fillEl = document.getElementById('loop-fill');
+  function scrollLoop(dir){
+    loopEl.scrollBy({ left: dir * 216, behavior: 'smooth' });
+  }
+  loopEl.addEventListener('scroll', () => {
+    const max = loopEl.scrollWidth - loopEl.clientWidth;
+    const pct = max > 0 ? (loopEl.scrollLeft / max) * 75 + 25 : 100;
+    fillEl.style.width = Math.min(100, pct) + '%';
+  });
+</script>
+
+<section id="features">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="kicker mono">Why It Works</div>
+      <h2>Every feature earns its spot in the loop.</h2>
+      <p>Nothing here is filler — each system keeps the loop honest, competitive, and worth logging back into.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat">
+        <div class="ic" style="background:rgba(255,111,156,0.15); color:var(--pink);">🧠</div>
+        <h3>Wake-Proof Challenges</h3>
+        <p>Camera, mic, and motion checks confirm it's really you — before the challenge counts.</p>
+      </div>
+      <div class="feat">
+        <div class="ic" style="background:rgba(250,158,93,0.15); color:var(--orange);">📉</div>
+        <h3>Streak Penalties, Not Rewards</h3>
+        <p>Breaking a streak costs real coins and XP — consistency is what pays off.</p>
+      </div>
+      <div class="feat">
+        <div class="ic" style="background:rgba(185,138,255,0.15); color:var(--purple);">👑</div>
+        <h3>King's Journey Chests</h3>
+        <p>Day 3, 7, 14, 21+ unlock legendary rewards that stick permanently once earned.</p>
+      </div>
+      <div class="feat">
+        <div class="ic" style="background:rgba(91,157,255,0.15); color:var(--blue);">🎨</div>
+        <h3>Full Avatar Customization</h3>
+        <p>Skins, accessories, and backgrounds you unlock by showing up, not paying up.</p>
+      </div>
+      <div class="feat highlight" id="rewards">
+        <div class="ic" style="background:rgba(69,217,192,0.15); color:var(--teal);">🏆</div>
+        <h3>Clans &amp; Leaderboards</h3>
+        <p>Join a clan, climb the global leaderboard, and see exactly where you rank against friends and rivals every single morning.</p>
+      </div>
+      <div class="feat">
+        <div class="ic" style="background:rgba(250,158,93,0.15); color:var(--orange);">📍</div>
+        <h3>Real Location &amp; Time</h3>
+        <p>Alarms respect your real schedule, and photo checks are matched against real places and times.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="cta-band">
+  <h2>Beat your alarm.<br/>Beat your friends.</h2>
+  <p>Your clan is already clashing every morning. The only question is whether you show up before they do.</p>
+  <a href="clash_of_sleep.html" class="btn-primary">Start your streak</a>
+</div>
+
+<footer>
+  <div class="wrap foot-row">
+    <div>&copy; Clash of Sleep</div>
+    <div>Waking up is a game. Start winning it.</div>
+  </div>
+</footer>
+
+</body>
+</html>
